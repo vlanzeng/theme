@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.theme.carmaintain.handle.modules.test.bean.Area">
+
+	<insert id="insert" parameterType="com.theme.carmaintain.handle.modules.test.bean.Area">
+		
+		<selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select SEQ_AREA_ID.nextVal as id from dual
+		</selectKey>
+		INSERT INTO
+		T_AREA(id,AREA_CODE,CITY_CODE,AREA_NAME)
+		VALUES
+		(#{id,jdbcType=NUMERIC},#{areaCode,jdbcType=VARCHAR},#{cityCode,jdbcType=VARCHAR},#{areaName,jdbcType=VARCHAR})
+	</insert>
+
+	<update id="update" parameterType="com.theme.carmaintain.handle.modules.test.bean.Area">
+		UPDATE T_AREA
+		<set>
+			<if test="cityCode != null">
+				CITY_CODE = #{cityCode},
+			</if>
+			<if test="areaName != null">
+				AREA_NAME = #{areaName},
+			</if>
+		</set>
+		where AREA_CODE = #{areaCode}
+	</update>
+
+	<select id="query" parameterType="com.theme.carmaintain.handle.modules.test.bean.Area"
+		resultType="com.theme.carmaintain.handle.modules.test.bean.Area">
+		SELECT
+		t.AREA_CODE areaCode,
+		t.CITY_CODE cityCode,
+		t.AREA_NAME areaName
+
+		FROM T_AREA t
+		<if test="cityCode != null">
+				where t.CITY_CODE=#{cityCode}
+			</if>
+	</select>
+
+	<select id="queryCount" parameterType="com.theme.carmaintain.handle.modules.test.bean.Area"
+		resultType="java.lang.Integer">
+		SELECT count(AREA_CODE)
+		FROM T_AREA t
+		<where>
+			<if test="areaCode != null">
+				and t.AREA_CODE = #{areaCode}
+			</if>
+			<if test="cityCode != null">
+				and t.CITY_CODE = #{cityCode}
+			</if>
+			<if test="areaName != null">
+				and t.AREA_NAME = #{areaName}
+			</if>
+		</where>
+	</select>
+
+	<delete id="deleteByIds" parameterType="com.theme.carmaintain.handle.modules.test.bean.Area">
+		delete from T_AREA
+		where AREA_CODE in
+		<foreach collection="primaryKeys" item="primaryKey" index="index"
+			open="(" close=")" separator=",">
+			#{primaryKey}
+		</foreach>
+	</delete>
+
+</mapper>
